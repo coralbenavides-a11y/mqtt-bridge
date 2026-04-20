@@ -4,6 +4,9 @@ import ssl
 import os
 import psycopg2
 import paho.mqtt.client as mqtt
+import sys
+
+sys.stdout.reconfigure(line_buffering=True)
 
 MQTT_BROKER = os.environ["MQTT_BROKER"]
 MQTT_PORT   = int(os.environ.get("MQTT_PORT", 8883))
