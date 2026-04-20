@@ -1,0 +1,39 @@
+name: MQTT Bridge
+
+on:
+  schedule:
+    # Bloque 1: 8:00 AM Colombia (13:00 UTC)
+    - cron: '0 13 * * *'
+    # Bloque 2: 2:00 PM Colombia (19:00 UTC)
+    - cron: '0 19 * * *'
+  workflow_dispatch:   # permite ejecutarlo manualmente
+
+jobs:
+  run-bridge:
+    runs-on: ubuntu-latest
+    timeout-minutes: 360   # 6 horas máximo
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run MQTT bridge
+        env:
+          MQTT_BROKER: ${{ secrets.MQTT_BROKER }}
+          MQTT_PORT:   ${{ secrets.MQTT_PORT }}
+          MQTT_USER:   ${{ secrets.MQTT_USER }}
+          MQTT_PASS:   ${{ secrets.MQTT_PASS }}
+          DB_HOST:     ${{ secrets.DB_HOST }}
+          DB_PORT:     ${{ secrets.DB_PORT }}
+          DB_NAME:     ${{ secrets.DB_NAME }}
+          DB_USER:     ${{ secrets.DB_USER }}
+          DB_PASS:     ${{ secrets.DB_PASS }}
+        run: python mqtt_to_supabase.py
